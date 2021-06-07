@@ -10,7 +10,7 @@ class HallDetails(models.Model):
        number=models.IntegerField()
 #model to store the acces token from user 
 class SpotifyToken(models.Model):
-       user=models.CharField(max_length=50,unique=True)
+       user=models.CharField(max_length=255,unique=True)
        created_at=models.DateTimeField(auto_now_add=True)
        refresh_token=models.CharField(max_length=255)
        access_token=models.CharField(max_length=255)
