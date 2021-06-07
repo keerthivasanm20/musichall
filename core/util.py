@@ -8,18 +8,20 @@ BASE_URL = "https://api.spotify.com/v1/me/"
 #getting the session id from the models for fetchinng the current accestoke for current user
 def get_user_tokens(session_id):
      user_tokens=SpotifyToken.objects.filter(user=session_id)
+     if user_tokens.exists(): 
+         return user_tokens[0]
+     else:
+         return None
      
-     return user_tokens[0]
-    
 def update_or_create_user_tokens(session_id,access_token,expires_in,refresh_token):
-    token=get_user_tokens(session_id)
+    tokens=get_user_tokens(session_id)
     #is a numeric valu this runs upto 1 hour
     #converts the expires in to the current time 
     expires_in=timezone.now() + timedelta(seconds=3600)
     #if tokes that exists ran out of time then updateing the token using the refresh token
     print(token)
     print(type(token))
-    tokens=token
+    
     
     if tokens:
         tokens.access_token=access_token
