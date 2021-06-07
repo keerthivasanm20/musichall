@@ -9,7 +9,7 @@ BASE_URL = "https://api.spotify.com/v1/me/"
 def get_user_tokens(session_id):
      user_tokens=SpotifyToken.objects.filter(user=session_id)
      
-     return user_tokens
+     return user_tokens[0]
     
 def update_or_create_user_tokens(session_id,access_token,expires_in,refresh_token):
     token=get_user_tokens(session_id)
@@ -19,7 +19,7 @@ def update_or_create_user_tokens(session_id,access_token,expires_in,refresh_toke
     #if tokes that exists ran out of time then updateing the token using the refresh token
     print(token)
     print(type(token))
-    tokens=token[0]
+    tokens=token
     
     if tokens:
         tokens.access_token=access_token
