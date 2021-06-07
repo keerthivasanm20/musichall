@@ -19,8 +19,8 @@ def update_or_create_user_tokens(session_id,access_token,expires_in,refresh_toke
     #converts the expires in to the current time 
     expires_in=timezone.now() + timedelta(seconds=3600)
     #if tokes that exists ran out of time then updateing the token using the refresh token
-    print(token)
-    print(type(token))
+    print(tokens)
+    print(type(tokens))
     
     
     if tokens:
