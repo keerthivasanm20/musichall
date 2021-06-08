@@ -1,3 +1,4 @@
+
 import React, { Component } from 'react'
 import CSRFToken from './csrftoken'
 
@@ -9,24 +10,59 @@ export default class SongComponent extends Component {
         this.state = {
             //  Name:'keert',
             //  host:'yes',
+              token:"",
+              count:0,
+              img:'',
+
              song:{},
         }
         this.roomCode =this.props.match.params.room;
         this.action="/getroom/"+this.roomCode
         this.getcurrentsong=this.getcurrentsong.bind(this)
         this.getcurrentsong();
-        console.log("th")
+        
     }
     componentDidMount()
     {
         this.interval=setInterval(this.getcurrentsong,1000)
-
+    
 
     }
     componentWillUnmount()
     {
         clearInterval(this.interval);
     }
+   
+    handleScriptLoad = () => {
+        var token =this.state.token;
+        console.log(token)
+  const player = new Spotify.Player({
+    name: 'Web Playback SDK Quick Start Player',
+    getOAuthToken: cb => { cb(token); }
+  });
+
+  // Error handling
+  player.addListener('initialization_error', ({ message }) => { console.error(message); });
+  player.addListener('authentication_error', ({ message }) => { console.error(message); });
+  player.addListener('account_error', ({ message }) => { console.error(message); });
+  player.addListener('playback_error', ({ message }) => { console.error(message); });
+
+  // Playback status updates
+  player.addListener('player_state_changed', state => { console.log(state); });
+
+  // Ready
+  player.addListener('ready', ({ device_id }) => {
+    console.log('Ready with Device ID', device_id);
+  });
+
+  // Not Ready
+  player.addListener('not_ready', ({ device_id }) => {
+    console.log('Device ID has gone offline', device_id);
+  });
+
+  // Connect to the player!
+  player.connect();
+        }
     getcurrentsong()
     {
         fetch('/currentsong'+'?code='+this.roomCode)
@@ -39,8 +75,15 @@ export default class SongComponent extends Component {
             }
         }).then((data)=>{
             this.setState({
-                song:data
+                song:data,
+                img:data['image_url'],
+                token:data['access_token'],
+                 count:this.state.count+1,
             });
+            
+          this.handleScriptLoad()
+         
+      
             console.log(data);
         });
          
@@ -61,7 +104,7 @@ export default class SongComponent extends Component {
                 return {};
          }
          else{
-            alert("Needs Premium Login");
+         
             return response.json();
          }
         })
@@ -82,7 +125,7 @@ export default class SongComponent extends Component {
                 return {};
          }
          else{
-            alert("Needs Premium Login");
+           
             return response.json();
          }
         })
@@ -98,10 +141,12 @@ export default class SongComponent extends Component {
       
 
         return (
+      
             <div id="hey" >
+           
                    <h3>Code:{this.roomCode}</h3>
          
-              <img className="col-sm-4" id="Music" src={this.state.song.image_url}></img>
+              <img className="col-sm-4" id="Music" src={this.state.img}></img>
               <div id="details">
               <h4>{this.state.song.title}</h4>
               <h4>{this.state.song.artist}</h4>

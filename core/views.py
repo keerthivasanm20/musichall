@@ -83,7 +83,7 @@ class ReactView(APIView):
 class AuthURL(APIView):
     def get(self,request):
         #scopes needed by this application from spotify
-        scopes='user-modify-playback-state user-read-playback-state  user-read-currently-playing'
+        scopes="user-read-email user-read-private streaming user-modify-playback-state user-read-playback-state user-read-currently-playing"
         #returns the string 
         url=Request('GET','https://accounts.spotify.com/authorize',params={
               'scope':scopes,
@@ -210,6 +210,7 @@ class CurrentSong(APIView):
         #to handle multiple artists
 
         artist_string=""
+        access_token=get_user_tokens(timespace['session']).access_token
         for i,artist in enumerate(item.get('artists')):
             if i > 0:
                 artist_string +=", " 
@@ -223,7 +224,8 @@ class CurrentSong(APIView):
             'image_url':album_cover,
             'is_playing':is_playing,
              'votes':0,
-             'id':song_id
+             'id':song_id,
+             'access_token':access_token,
         }
         
         # print(request.session.session_key)
@@ -278,15 +280,16 @@ class leaveroom(APIView):
              print("session id")
              print(sid)
              room=database.child("users").child(room_code).child(1).get().val()
-             if room['session'] == sid:
-                 database.child("users").child(room_code).remove()
+             if room != None:
+               if room['session'] == sid:
+                   database.child("users").child(room_code).remove()
                   
-             else:
-                for i in range(2,int(room['No_of_Users'])+1):
-                   cmp_sid=database.child("users").child(room_code).child(i).get().val()
+               else:
+                 for i in range(2,int(room['No_of_Users'])+1):
+                    cmp_sid=database.child("users").child(room_code).child(i).get().val()
                 #    print(cmp_sid)
                 #    print(i)
-                   if cmp_sid['session_id'] == sid:
+                    if cmp_sid['session_id'] == sid:
                         timestamp=database.child("users").child(room_code).child(i).remove()
                         # print(timestamp)
                         break
