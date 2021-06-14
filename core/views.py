@@ -26,7 +26,7 @@ config = {
 firebase=pyrebase.initialize_app(config)
 auth1 = firebase.auth()
 database=firebase.database()
-
+#api view tell us that this class is going to handle standard htpp methods such as put get post delete
 class ReactView(APIView):
     
     serializer_class = ReactSerializer
@@ -79,7 +79,7 @@ class ReactView(APIView):
                 serializer.save()
             
             return redirect("/room/"+number)
-
+#to update in firebase use .update({ key :value }) ..use update after fetching the document inside the collection
 class AuthURL(APIView):
     def get(self,request):
         #scopes needed by this application from spotify
